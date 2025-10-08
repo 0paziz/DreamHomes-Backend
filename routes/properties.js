@@ -1,5 +1,5 @@
+// routes/propertyRoutes.js
 import express from "express";
-import multer from "multer";
 import {
   createProperty,
   getProperties,
@@ -9,17 +9,9 @@ import {
   getMyProperties
 } from "../controllers/propertyController.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { upload } from "../config/cloudinary.js";
 
 const router = express.Router();
-
-// Multer setup (local storage)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + "-" + Math.round(Math.random() * 1e9) + "-" + file.originalname),
-});
-
-const upload = multer({ storage });
 
 // Routes
 router.route("/")
@@ -29,7 +21,6 @@ router.route("/")
 // Route to get properties of the logged-in user
 router.route("/my-properties")
   .get(protect, getMyProperties);
-
 
 router.route("/:id")
   .get(getPropertyById)
