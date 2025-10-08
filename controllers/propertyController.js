@@ -70,6 +70,14 @@ export const getProperties = async (req, res) => {
   }
 };
 
+export const getMyProperties = async (req, res) => {
+  try {
+    const properties = await Property.find({ createdBy: req.user._id }); 
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }   }
+
 
 // Get single property
 export const getPropertyById = async (req, res) => {

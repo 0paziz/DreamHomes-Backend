@@ -6,6 +6,7 @@ import {
   getPropertyById,
   updateProperty,
   deleteProperty,
+  getMyProperties
 } from "../controllers/propertyController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -24,6 +25,11 @@ const upload = multer({ storage });
 router.route("/")
   .get(getProperties)
   .post(protect, upload.array("images", 5), createProperty);
+
+// Route to get properties of the logged-in user
+router.route("/my-properties")
+  .get(protect, getMyProperties);
+
 
 router.route("/:id")
   .get(getPropertyById)
