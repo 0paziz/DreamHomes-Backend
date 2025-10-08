@@ -12,8 +12,9 @@ const app = express();
 // Middleware
 // Allow requests from your frontend
 app.use(cors({
-  origin: 'https://dreamhomes3.netlify.app/', // frontend URL
-  methods: ['GET','POST','PUT','DELETE']
+  origin: 'https://dreamhomes3.netlify.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
 
 app.use(express.json());
