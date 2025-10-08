@@ -5,12 +5,20 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import propertyRoutes from "./routes/properties.js";
 import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
 const app = express();
 
 // Connect to MongoDB
 connectDB();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Middleware
 app.use(express.json());
@@ -22,8 +30,7 @@ const allowedOrigins = [
 ];
 app.use(cors({
   origin: (origin, callback) => {
-    // allow requests with no origin (mobile apps, Postman)
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // allow Postman / mobile
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = `CORS policy: The origin ${origin} is not allowed`;
       return callback(new Error(msg), false);
@@ -43,11 +50,12 @@ if (process.env.NODE_ENV !== "production") {
 app.use("/api/users", userRoutes);
 app.use("/api/properties", propertyRoutes);
 
-// Serve frontend in production (optional)
+// Serve frontend in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(process.cwd(), "client/build")));
 
-  app.get("*", (req, res) => {
+  // Use "/*" instead of "*" to avoid PathError
+  app.get("/*", (req, res) => {
     res.sendFile(path.resolve(process.cwd(), "client", "build", "index.html"));
   });
 }
